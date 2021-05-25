@@ -1,4 +1,4 @@
-//$fn=100;
+
 
 module pickup(width,length, height)
 {
@@ -41,7 +41,7 @@ module pickup(width,length, height)
 
                 radiusOfMount = 0.058 * width;
 
-                mountOffsetX = width * .24;
+                mountOffsetX = width * .24.5;
                 mountOffsetY = length /2;
                 translate([mountOffsetX,mountOffsetY])
                     circle(r=radiusOfMount);
@@ -57,23 +57,47 @@ module pickup(width,length, height)
     }
 };
 
-intersection() {
+
+pickGuardRadius = 80;
+pickGuardOffest = [-17, 20];
+
+intersection(){
     difference()
     {
-        translate([0,40,10])
-            minkowski()
-                {
-                    cube([110, 150, 17], center = true);
-                    cylinder(r=2,h=1);
-                };
+        union()
+        {
+            intersection() {
+                translate([0,40,10])
+                        minkowski()
+                            {
+                                cube([110, 150, 20], center = true);
+                                
+                                cylinder(r=2,h=1, center =true, $fn=500);
+                            };
+                
 
-        pickup( 100.9, 19, 10);
-            translate([0,73 + (19),0,])
-        pickup( 103.3, 19 ,10);
+                $fn=100;
+                translate([0,200,-346])
+                    rotate([90,0,0])
+                        cylinder(h = 300 ,  r= 355.6);
+            }
 
+            translate(pickGuardOffest)
+                linear_extrude(height = 1.5, center = true)
+                    circle(r = pickGuardRadius);
+        }
+            
+
+        pickup( 100.9, 19, 20);
+            translate([0,73 + (19),0])
+        pickup( 103.3, 19 ,20);
+
+        linear_extrude(height = 20, center = true)
+            #polygon(points=[[-126,114],[-54,60],[-69,25],[-107,17.5]]);
     };
-    $fn=100;
-    translate([0,200,-346])
-        rotate([90,0,0])
-            cylinder(h = 300 ,  r= 355.6);
+    translate(pickGuardOffest)
+        cylinder(r=pickGuardRadius,h = 100, $fn=500);
 }
+
+
+
